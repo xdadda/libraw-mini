@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="Sample illustrating the use of WebAssembly">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>libraw wasm</title>
+  </head>
+  <body>
+    <h1>LIBRAW wasm library</h1>
+    <div class="output"></div>
+
+
+    <div>
+      <button onclick="handleClick()">open file</button>
+    </div>
+    <img id="thumb_img" style="width: 50%";/><br>
+    <progress id="progress" value="0" max="23"></progress> <span id="label">...</span><br>
+    <canvas id="raw_canvas" style="width: 50%";></canvas>
+
+
+    <script>
+      let raw;
+      async function loadRAW(arrayBuffer,cb=()=>{}) {
+        if(!raw) {
+          const mod = await import('../dist/libraw-mini.js');
+          const LibRaw = mod['LibRaw']
+          raw = await new LibRaw();
+          const version = await raw.version();
+          console.log('LibRaw: version', version);
+        } 
+        //else await raw.init();
+        const stime=Date.now();
+        
+        const loadResult = await raw.open(arrayBuffer,{});
+        if(loadResult) return console.error('LibRaw open failed:', loadResult);
+                
+        const metadata = await raw.getmetadata()
+        console.log('LibRaw: metadata:', metadata);
+
+        /*
+        //GET THUMB
+          const thumb = await raw.getthumbnail();
+          //console.log('LibRaw: getthumbnail', thumb);
+          // Display thumbnail image
+          const thumbImg = document.getElementById('thumb_img');
+          const blob = new Blob([thumb.data], { type: 'image/jpeg' });
+          const url = URL.createObjectURL(blob);
+          thumbImg.src = url;
+          console.log('Displayed thumbnail image');
+          //return raw.close();
+        */
+
+        await raw.setparams({use_camera_wb:1,}) //use_camera_wb:1,use_auto_wb:1,output_color:7,output_bps:8,user_qual:11
+
+        const image = await raw.getimage(cb)
+        //console.log('LibRaw: getimage', image);
+        if(image?.format_str==='Bitmap'){
+            // Display bitmap image
+            const canvas = document.getElementById('raw_canvas');
+            canvas.width = image.width;
+            canvas.height = image.height;
+            const ctx = canvas.getContext('2d', { colorSpace: "display-p3" });
+            const imgData = new ImageData(image.data, image.width, image.height, { colorSpace: "display-p3" });
+            ctx.putImageData(imgData, 0, 0);
+            console.log('Displayed image in ',Date.now()-stime,'ms');
+        }
+        else if(image?.format_str==='JPEG'){
+            // Display jpeg image
+            const canvas = document.getElementById('raw_canvas');
+            const ctx = canvas.getContext('2d', { colorSpace: "display-p3" });
+            const blob = new Blob([image.data], { type: 'image/jpeg' });
+            const img = new Image();
+            img.src=URL.createObjectURL(blob)
+            await img.decode();
+            ctx.drawImage(img,0,0);
+        }
+        else {
+            console.error('LibRaw: unsupported image format:', image);
+        }
+        
+
+        /*
+        */
+        //don't close otherwise would need to re-init to allocate memory for a new image
+        //await raw.close();    
+
+
+      };
+
+    </script>
+
+    <script>
+
+        async function openFile(ext){
+          let input = document.createElement('input');
+          try{
+            input.setAttribute("hidden", "");
+            input.type = 'file';
+            input.value=null;
+            if(ext) input.accept=ext;
+            document.body.appendChild(input); // doesn't work reliably in Safari if the input is not in the DOM!?
+            const ev=await new Promise(r=> {input.onchange=r; input.oncancel=r; input.click()} );
+            input.remove();
+            if(ev.type==='cancel') return
+            const file = ev.target.files[0];
+            if(!file) return await alert('Unsupported file format!')
+            //if(file.size>60*1024*1024) return await alert('Upload files smaller than 60MB!')
+            return file
+          } catch(error){
+            await alert('Error opening file')
+            console.error(error)
+          }
+        }
+
+        function readableBytes(bytes) {
+          const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+          let i = 0;
+          for (; bytes >= 1024 && i < units.length - 1; i++) {
+            bytes /= 1024;
+          }
+          return bytes.toFixed(2) + '' + units[i];
+        }
+
+        async function xprogress(count,msg){
+            //empirically around 20 steps are needed
+            const steps=20;
+            console.log('Working ...',count,Math.round(count/steps*100)+'%',msg);
+            label.innerText=msg;
+            const progress = document.getElementById('progress');
+            if(count<steps) progress.value++;
+        }
+
+        async function handleClick(e){
+          try {
+            progress.value=0;
+            thumb_img.src='';
+            label.innerText='...';
+            raw_canvas.getContext('2d').clearRect(0, 0, raw_canvas.width, raw_canvas.height);
+
+            const file = await openFile();
+            if(!file) return
+            progress.value++
+            const reader= new FileReader();
+            await new Promise(r=> reader.onload=r, reader.readAsArrayBuffer(file));
+            console.log('Opened file:', file, readableBytes(reader.result.byteLength));
+            progress.value++
+
+            await loadRAW(reader.result,xprogress);
+
+            progress.value=progress.max;
+            label.innerText='Finished!'
+          } catch(error){
+            console.error(error)
+          }
+        }
+    </script>
+  </body>
+</html>
+
+    

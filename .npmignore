@@ -1,0 +1,10 @@
+.DS_Store
+.devcontainer/
+libraw/
+node_modules/
+.gitignore
+build.js
+compile.sh
+index.html
+libraw*
+package*

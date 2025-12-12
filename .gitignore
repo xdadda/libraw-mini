@@ -1,0 +1,5 @@
+.DS_Store
+dist/
+libraw/
+node_modules
+package-lock.json
