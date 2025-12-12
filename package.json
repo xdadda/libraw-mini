@@ -1,9 +1,9 @@
 {
   "name": "libraw-mini",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "description": "emscripten libraw wasm",
   "type": "module",
-  "main": "mylibraw.js",
+  "main": "libraw-mini.js",
   "scripts": {
     "test": "npx serve",
     "build": "node build.js"
@@ -19,7 +19,7 @@
   "author": "xdadda",
   "license": "MIT",
   "exports": {
-    ".": "./dist/mylibraw.js"
+    ".": "./dist/libraw-mini.js"
   },
   "devDependencies": {
     "esbuild": "^0.27.1"
