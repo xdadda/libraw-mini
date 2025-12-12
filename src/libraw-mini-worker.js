@@ -1,18 +1,18 @@
 import Lib from './libraw.js';
 const Module = await Lib();
 
-      // Create wrapper functions for all the exported C functions
-	  const api = {
-        init: Module.cwrap('init', 'number',['number']),
-        recycle: Module.cwrap('recycle', 'number'),
-        open: Module.cwrap('open_buffer', 'number', ['number', 'number', 'number']),
+	// Create wrapper functions for all the exported C functions
+	const api = {
+		init: Module.cwrap('init', 'number',['number']),
+		recycle: Module.cwrap('recycle', 'number'),
+		open: Module.cwrap('open_buffer', 'number', ['number', 'number', 'number']),
 		close: Module.cwrap('close', 'number'),
-        version: Module.cwrap('version', 'number'),
+		version: Module.cwrap('version', 'number'),
 
-        get_image: Module.cwrap('get_image', 'number', ['number','number']),
-        clear_image: Module.cwrap('clear_image', '', ['number']),
-        get_thumb: Module.cwrap('get_thumb', 'number', ['number']),
-        clear_thumb: Module.cwrap('clear_image', '', ['number']),
+		get_image: Module.cwrap('get_image', 'number', ['number','number']),
+		clear_image: Module.cwrap('clear_image', '', ['number']),
+		get_thumb: Module.cwrap('get_thumb', 'number', ['number']),
+		clear_thumb: Module.cwrap('clear_image', '', ['number']),
 
 		get_idata: Module.cwrap('get_idata', 'number'),
 		get_sizes: Module.cwrap('get_sizes', 'number'),
@@ -20,24 +20,24 @@ const Module = await Lib();
 
 		set_param: Module.cwrap('set_param', '', ['number','number','number']),
 
-      };
-      const img_formats = {
-        0: 'Unknown',
-        1: 'JPEG',
-        2: 'Bitmap',
-        3: 'JPEGXL',
-        4: 'H265',
-      };
-	  const thumb_formats = {
-        0: 'Unknown',
-        1: 'JPEG',
-        2: 'Bitmap',
+	};
+	const img_formats = {
+		0: 'Unknown',
+		1: 'JPEG',
+		2: 'Bitmap',
+		3: 'JPEGXL',
+		4: 'H265',
+	};
+	const thumb_formats = {
+		0: 'Unknown',
+		1: 'JPEG',
+		2: 'Bitmap',
 		3: 'Bitmap16',
 		4: 'Layer',
 		5: 'Rollei',
 		6: 'H265',
 		7: 'JPEGXL',
-	  }
+	}
 
 let librawPtr, bufPtr;
 librawPtr = api.init();

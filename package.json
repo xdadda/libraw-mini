@@ -1,9 +1,9 @@
 {
   "name": "libraw-mini",
-  "version": "0.1.3",
+  "version": "0.1.6",
   "description": "emscripten libraw wasm",
   "type": "module",
-  "main": "libraw-mini.js",
+  "main": "dist/libraw-mini.js",
   "scripts": {
     "test": "npx serve",
     "build": "node build.js"
@@ -21,6 +21,7 @@
   "exports": {
     ".": "./dist/libraw-mini.js"
   },
+  "files": ["./dist/*"],
   "devDependencies": {
     "esbuild": "^0.27.1"
   }

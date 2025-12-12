@@ -9,14 +9,14 @@ import { promises as fs } from "fs";
 		await fs.writeFile('./libraw.js', librawjs);
         */
 		await build({
-			entryPoints: ['libraw-mini.js', 'libraw-mini-worker.js', 'libraw.js'], // Entry point of your library
+			entryPoints: ['./src/libraw-mini.js','./src/libraw-mini-worker.js'], // Entry point of your library
 			outdir: 'dist', // Output directory
 			bundle: true, // Bundle all files
 			minify: true, // Minify the output
 			sourcemap: false, // Generate source maps
 			format: 'esm', // Output format (ES Module)
 		});
-		await fs.copyFile('./libraw.wasm', './dist/libraw.wasm');
+		await fs.copyFile('./src/libraw.wasm', './dist/libraw.wasm');
 		console.log('Build successful!');
 	} catch (error) {
 		console.error('Build failed:', error);

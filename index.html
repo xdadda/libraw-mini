@@ -23,7 +23,7 @@
       let raw;
       async function loadRAW(arrayBuffer,cb=()=>{}) {
         if(!raw) {
-          const mod = await import('../dist/libraw-mini.js');
+          const mod = await import('/dist/libraw-mini.js');
           const LibRaw = mod['LibRaw']
           raw = await new LibRaw();
           const version = await raw.version();

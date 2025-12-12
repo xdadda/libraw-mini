@@ -1,7 +1,9 @@
+
 export class LibRaw {
 	constructor() {
 		return (async()=>{
-			this.worker = new Worker('./libraw-mini-worker.js', {type:"module"});
+			//this.worker = new Worker('./libraw-mini-worker.js', {type:"module"});
+			this.worker = new Worker(new URL("./libraw-mini-worker.js", import.meta.url), {type:"module"});
 			this.waitForWorker = false;
 			this.worker.onmessage = ({data}) => {
 				if(data?.out?.cb && this.cb) return this.cb(data.out.count,data.out.msg);				

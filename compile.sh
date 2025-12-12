@@ -10,12 +10,12 @@ emcc -O3 \
     -s ALLOW_TABLE_GROWTH \
     -s ENVIRONMENT="web,worker" \
     -I libraw \
-    libraw.c \
+    src/libraw-mini.c \
     libraw/src/*.cpp \
     libraw/src/{decoders,decompressors,demosaic,integration,metadata,tables,utils,x3f}/*.cpp \
     libraw/src/write/{apply_profile.cpp,file_write.cpp,tiff_writer.cpp} \
     libraw/src/preprocessing/{raw2image.cpp,ext_preprocess.cpp,subtract_black.cpp} \
     libraw/src/postprocessing/{aspect_ratio.cpp,dcraw_process.cpp,mem_image.cpp,postprocessing_aux.cpp,postprocessing_utils.cpp,postprocessing_utils_dcrdefs.cpp} \
-    -o libraw.js
+    -o src/libraw.js
 
 node build.js
