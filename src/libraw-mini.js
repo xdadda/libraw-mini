@@ -1,9 +1,22 @@
+async function getWorkerURL( url ) {
+  const content = await fetch(url,{credentials:"same-origin"}).then(async(r)=>await r.text())
+  return URL.createObjectURL( new Blob( [ content ], { type: "text/javascript" } ) );
+}
 
 export class LibRaw {
 	constructor() {
 		return (async()=>{
-			//this.worker = new Worker('./libraw-mini-worker.js', {type:"module"});
-			this.worker = new Worker(new URL("./libraw-mini-worker.js", import.meta.url), {type:"module"});
+			const isdev = import.meta.url.includes('/src/')
+			if(isdev) {
+				//development
+				this.worker = new Worker(new URL("./libraw-mini-worker.js", import.meta.url), {type:"module"});
+			} else {
+				//production
+				const workerurl = new URL("./libraw-mini-worker.js", import.meta.url)
+				const worker_url = await getWorkerURL(workerurl.href)
+				this.worker = new Worker( worker_url, {type:"module"} )
+				URL.revokeObjectURL( worker_url );
+			}
 			this.waitForWorker = false;
 			this.worker.onmessage = ({data}) => {
 				if(data?.out?.cb && this.cb) return this.cb(data.out.count,data.out.msg);				

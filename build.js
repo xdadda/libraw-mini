@@ -8,6 +8,7 @@ import { promises as fs } from "fs";
 		librawjs = librawjs.replace(/var workerOptions=([^]+?);worker=new Worker\(new URL\("([^"]+)",import.meta.url\),workerOptions\);/, `worker=new Worker(new URL("$2",import.meta.url),$1);`); // Correction to make worker options static so that it works with vite
 		await fs.writeFile('./libraw.js', librawjs);
         */
+	   	await fs.rm('./dist', { recursive: true, force: true });
 		await build({
 			entryPoints: ['./src/libraw-mini.js','./src/libraw-mini-worker.js'], // Entry point of your library
 			outdir: 'dist', // Output directory
@@ -16,7 +17,7 @@ import { promises as fs } from "fs";
 			sourcemap: false, // Generate source maps
 			format: 'esm', // Output format (ES Module)
 		});
-		await fs.copyFile('./src/libraw.wasm', './dist/libraw.wasm');
+		//await fs.copyFile('./src/libraw.wasm', './dist/libraw.wasm');
 		console.log('Build successful!');
 	} catch (error) {
 		console.error('Build failed:', error);

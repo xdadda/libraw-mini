@@ -2,6 +2,6 @@
 
 Emscripten wasm port of the great libraw library
 
-Instructions will follow
+[Little demo](https://codepen.io/xdadda/pen/PwNgRyR)
 
-Loosely inspired by [LibRaw-Wasm](https://github.com/ybouane/LibRaw-Wasm)
+Instructions will follow

@@ -1,6 +1,6 @@
 {
   "name": "libraw-mini",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "description": "emscripten libraw wasm",
   "type": "module",
   "main": "dist/libraw-mini.js",

@@ -9,6 +9,7 @@ emcc -O3 \
     -s MODULARIZE=1 \
     -s ALLOW_TABLE_GROWTH \
     -s ENVIRONMENT="web,worker" \
+    -s SINGLE_FILE=1 \
     -I libraw \
     src/libraw-mini.c \
     libraw/src/*.cpp \
