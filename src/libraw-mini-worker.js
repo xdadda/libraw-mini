@@ -108,14 +108,22 @@ async function setup(){
 							image.colors = imgView.getUint8(8,1); //ushort
 							image.bits = imgView.getUint8(10,1); //ushort
 							//console.log('Converting bitmap',width,height,colors,bits,'>',image.size)
-							let rgbaData = new Uint8ClampedArray(image.width * image.height * 4);
-							for (let i = 0, j = 0; i < imgData.length; i += 3, j += 4) {
-								rgbaData[j] = imgData[i];     // R
-								rgbaData[j + 1] = imgData[i + 1]; // G
-								rgbaData[j + 2] = imgData[i + 2]; // B
-								rgbaData[j + 3] = 255;       // A
-							}
-							image.data=rgbaData
+						    if (image.bits === 8) {
+						    	let rgbaData = new Uint8ClampedArray(image.width * image.height * 4);
+
+								for (let i = 0, j = 0; i < imgData.length; i += 3, j += 4) {
+									rgbaData[j] = imgData[i];     // R
+									rgbaData[j + 1] = imgData[i + 1]; // G
+									rgbaData[j + 2] = imgData[i + 2]; // B
+									rgbaData[j + 3] = 255;       // A
+								}
+
+								image.data=rgbaData;
+							} else if (image.bits === 16) {
+								// Outputs 16-bit data as Uint16Array, as RGB (for processing, not display) 
+						    	let rgbData16 = new Uint16Array(Module.HEAP8.buffer, imagePtr + 16, image.size / 2);
+						    	image.data=rgbData16;
+						    }
 						}
 						else {
 							image.data=imgData;
